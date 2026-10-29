@@ -1,9 +1,9 @@
 ---
-name: vast
+name: vast-ai
 description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use whenever a task rents or manages Vast.ai instances.
 ---
 
-# vast
+# vast-ai
 
 Use the `vastai` CLI (`uv run --no-project --with vastai==1.8.3 vastai ...`).
 It reads the key from `VAST_API_KEY`; deliver it with the secret store's exec
