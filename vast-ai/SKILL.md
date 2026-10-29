@@ -22,8 +22,8 @@ command placed before `uv run`.
 vastai search offers 'compute_cap>=800 cuda_vers>=<image CUDA> num_gpus=1 gpu_ram>=<GB> reliability>0.98 verified=true geolocation notin [CN,FR]' -o 'dph_total'
 ```
 
-- `compute_cap>=800`: Ampere or newer. Older GPUs such as the V100 cannot run
-  PyTorch's CUDA 13 build.
+- `compute_cap>=800`: Ampere or newer. Older GPUs are not used; they lack
+  fast bfloat16, and current CUDA releases drop them.
 - `cuda_vers` at least the CUDA of the image: a CUDA 13 image does not start
   on a host whose driver supports only 12.x.
 - No hosts in China or France.
@@ -32,6 +32,9 @@ vastai search offers 'compute_cap>=800 cuda_vers>=<image CUDA> num_gpus=1 gpu_ra
 
 - Create with `--ssh --direct --cancel-unavail`, a `--label` that names the
   work, and enough `--disk`.
+- Connect over SSH with the key registered to the Vast.ai account
+  (`ssh -i <key> -p <port> root@<host>`). Keep the key's path, the host and
+  the port out of anything printed.
 - After the instance runs, check `nvidia-smi` shows its GPUs nearly empty
   before starting; a host with another process on the GPU runs out of memory.
 - Run long work in the background and have it write an exit-code file when
@@ -43,6 +46,7 @@ vastai search offers 'compute_cap>=800 cuda_vers>=<image CUDA> num_gpus=1 gpu_ra
 
 ## Ending
 
-- Destroy the instance (`vastai destroy instance <id>`) whether the work
-  succeeded or failed, in a `finally` block or a trap.
+- Destroy the instance (`vastai destroy instance -y <id>`) whether the work
+  succeeded or failed, in a `finally` block or a trap. Without `-y` it can
+  stop to ask for confirmation and leave the instance running.
 - Then check `vastai show instances` lists nothing left with the label.
