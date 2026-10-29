@@ -8,8 +8,10 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
 - Before renting, give the user the machine, the expected hours and the
   total cost, and wait for approval. If the project already has a script
   that rents for this kind of work, use it instead of writing a new one.
-- Rent only Ampere or newer GPUs, on hosts outside China and France, whose
-  driver supports the CUDA version of the image.
+- Rent only Ampere or newer GPUs on hosts whose driver supports the CUDA
+  version of the image.
+- Drop a host that runs slowly or refuses SSH, and keep a record of it so it
+  is not rented again: one ran at half the usual speed and refused SSH.
 - Before starting the work, check that the GPUs hold almost no memory: a
   host whose GPU held another process's memory ran training out of memory.
 - Decide that the work ended only from an exit-code file it writes when it
