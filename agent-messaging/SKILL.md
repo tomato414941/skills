@@ -10,6 +10,7 @@ description: Send a message to another agent by typing into its tmux window, as 
   while its input already holds text. Never type an approval or a decision that is the user's to
   make; ask the user instead.
 - Put the message on one line, since a line break can send it early. Type it with `send-keys -l`
-  and send Enter on its own.
+  and send Enter on its own. Then look at the window: if the text still sits in the input, the
+  Enter was taken with the typing, so wait a moment and send Enter again.
 - For a window on another machine, pass the message on stdin so that no shell rewrites it:
   `printf '%s' "$message" | ssh <host> "tmux load-buffer -b msg - && tmux paste-buffer -d -b msg -t '<target>' && tmux send-keys -t '<target>' Enter"`
