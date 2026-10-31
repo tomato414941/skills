@@ -5,8 +5,7 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
 
 # vast-ai
 
-- Rent only Ampere or newer GPUs on hosts whose driver supports the CUDA
-  version of the image.
+- Rent only hosts whose driver supports the CUDA version of the image.
 - Some hosts run at half the usual speed. If the work runs much slower than
   expected, stop using that host and rent another.
 - Before starting the work, check that the GPUs hold almost no memory: a
