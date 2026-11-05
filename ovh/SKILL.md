@@ -15,9 +15,10 @@ description: Rent servers, VPS and GPUs on OVHcloud, and wait for VPS stock. Rea
   cart before the checkout.
 - An API consumer key can be limited to the addresses of the machine it was
   made on; from another machine its calls are refused.
-- To wait for a VPS that is out of stock, add it to `vps_watch.py` in this
-  folder: `python3 vps_watch.py add NAME PLAN MAX_PRICE --places any`. It
-  orders each target once, in the first allowed place with Linux stock, and
-  stops a target whose price is above its cap. `list` shows the targets and
-  `check` shows where each could be ordered now. Where it is set up, a user
-  timer (`ovh-vps-watch.timer`) runs it every five minutes.
+- To wait for a VPS that is out of stock, add it to `scripts/vps_watch.py` in
+  this folder:
+  `python3 scripts/vps_watch.py add NAME PLAN MAX_PRICE --places any`.
+  It orders each target once, in the first allowed place with Linux stock,
+  and stops a target whose price is above its cap. `list` shows the targets
+  and `check` shows where each could be ordered now. Where it is set up, a
+  user timer (`ovh-vps-watch.timer`) runs it every five minutes.
