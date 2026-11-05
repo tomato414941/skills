@@ -1,9 +1,13 @@
 import json
 import contextlib
 import io
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import stock_watch
 
@@ -309,6 +313,22 @@ class WatchTests(unittest.TestCase):
         self.assertEqual(self.timer, [True, False])
         self.watch(api).run()
         self.assertEqual(len(api.checkouts()), 1)
+
+    def test_loads_an_explicit_profile_with_an_isolated_environment(self):
+        result = subprocess.run([sys.executable, "-I", "-B", str(Path(stock_watch.__file__).resolve()),
+                                 "--home", str(self.root), "list"],
+                                env={"PATH": os.defpath}, capture_output=True, timeout=5)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)["name"], "sample-server")
+
+    def test_stops_the_timer_selected_for_the_profile(self):
+        api = FakeOvh()
+        original = stock_watch.Watch
+        def isolated_watch(root, timer):
+            return original(root, http=api, timer=timer)
+        with patch.object(stock_watch, "Watch", side_effect=isolated_watch), patch.object(stock_watch, "set_timer") as control:
+            stock_watch.main(["--home", str(self.root), "--timer", "sample-watch.timer", "run"])
+        control.assert_called_once_with(False, "sample-watch.timer")
 
 
 if __name__ == "__main__":

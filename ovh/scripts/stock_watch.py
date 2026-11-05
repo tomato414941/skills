@@ -29,8 +29,8 @@ def home():
     return Path(os.environ.get("OVH_STOCK_WATCH_HOME") or Path.home() / ".local/share/ovh-stock-watch")
 
 
-def set_timer(on):
-    subprocess.run(["systemctl", "--user", "enable" if on else "disable", "--now", TIMER],
+def set_timer(on, timer_name=None):
+    subprocess.run(["systemctl", "--user", "enable" if on else "disable", "--now", timer_name or TIMER],
                    check=False, capture_output=True)
 
 
@@ -405,6 +405,8 @@ class Watch:
 
 def main(argv=None, root=None, timer=set_timer):
     parser = argparse.ArgumentParser(description="Watch OVH VPS or dedicated server stock and order each target once.")
+    parser.add_argument("--home", type=Path, help="private directory containing this watch profile")
+    parser.add_argument("--timer", help="user timer belonging to this watch profile")
     commands = parser.add_subparsers(dest="command", required=True)
     add = commands.add_parser("add", help="register one approved purchase")
     add.add_argument("name")
@@ -428,7 +430,10 @@ def main(argv=None, root=None, timer=set_timer):
     commands.add_parser("check", help="check matching stock without ordering")
     commands.add_parser("run", help="place approved orders when matching stock appears")
     args = parser.parse_args(argv)
-    watch = Watch(root or home(), timer=timer)
+    if args.timer and not re.fullmatch(r"[A-Za-z0-9_.@-]+\.timer", args.timer):
+        parser.error("--timer must name a user timer")
+    timer_callback = (lambda on: set_timer(on, args.timer)) if args.timer else timer
+    watch = Watch(root or args.home or home(), timer=timer_callback)
     if args.command == "add":
         extra = {key: getattr(args, key) for key in ("memory", "storage", "max_first_price", "max_monthly_without_tax",
                  "max_first_without_tax", "currency") if getattr(args, key) is not None}
