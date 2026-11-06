@@ -16,7 +16,9 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
   instance it kept as JSON.
 - `rent` and `run` need an SSH agent that holds exactly one key, whose public
   half each machine is given:
-  `foundation ssh-key agent KEY -- vast-rental rent ...`. That agent drops the
+  `foundation ssh-key agent KEY -- vast-rental rent ...`, where KEY is the
+  workstation's Vast.ai key that INFRA.md names. Every session on the
+  workstation uses that one key, so do not make another. The agent drops the
   key after 15 minutes, so wrap each later `run` again. The Vast.ai API key
   comes from `.env` beside the script, or from VAST_API_KEY.
 - Give `--hours` as the longest the work may take: a guard returns the machine
