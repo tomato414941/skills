@@ -14,13 +14,18 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
   rents the cheapest suitable machine, checks it at once and sends it back if
   it fails, until one passes or `--tries` machines have failed, and prints the
   instance it kept as JSON.
-- `rent` and `run` need an SSH agent that holds exactly one key, whose public
-  half each machine is given:
-  `foundation ssh-key agent KEY -- vast-rental rent ...`, where KEY is the
-  workstation's Vast.ai key that INFRA.md names. Every session on the
-  workstation uses that one key, so do not make another. The agent drops the
-  key after 15 minutes, so wrap each later `run` again. The Vast.ai API key
-  comes from `.env` beside the script, or from VAST_API_KEY.
+- `rent`, `run` and `ssh-config` need the caller's one SSH key, whose public
+  half each machine is given: the private key file that VAST_SSH_KEY_FILE
+  names, or else an SSH agent that holds exactly one key. Use the Vast.ai key
+  that INFRA.md names for the machine you are on, and do not make another.
+  Hand it over as a file, which lasts as long as the command:
+  `foundation exec --inputs '[{"name": "VAST_SSH_KEY_FILE", "source": {"id": "VARIABLE"}, "format": "file"}]' -- vast-rental rent ...`.
+  An agent from `foundation ssh-key agent` drops the key after 15 minutes. The
+  Vast.ai API key comes from `.env` beside the script, or from VAST_API_KEY.
+- `rent` writes how to reach the machine it kept as an ssh configuration and
+  prints its path as `ssh_config`: `ssh -F PATH vast-INSTANCE` (and
+  `rsync -e "ssh -F PATH"`) reach the machine with the same key, without its
+  address showing. `vast-rental ssh-config INSTANCE` writes it again.
 - Give `--hours` as the longest the work may take: a guard returns the machine
   at that deadline even if the session that rented it has ended.
   `vast-rental extend INSTANCE HOURS` moves the deadline.
