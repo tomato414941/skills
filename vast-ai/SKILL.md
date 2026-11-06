@@ -31,6 +31,7 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
 - `rent` keeps to machines that Vast.ai has verified; `--unverified` lets in
   unverified ones too. It sends back a machine that has not begun to load its
   image after five minutes, whose GPU holds memory or has its power capped,
+  whose GPU multiplies a fixed pair of matrices wrongly or differently twice,
   that is slower than checked machines with the same GPU, that downloads
   slower than `--min-download` MB/s (10 by default), or whose traffic leaves
   from another country than its listing names.
