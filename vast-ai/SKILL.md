@@ -14,18 +14,20 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
   rents the cheapest suitable machine, checks it at once and sends it back if
   it fails, until one passes or `--tries` machines have failed, and prints the
   instance it kept as JSON.
-- `rent`, `run` and `ssh-config` need the caller's one SSH key, whose public
-  half each machine is given: the private key file that VAST_SSH_KEY_FILE
-  names, or else an SSH agent that holds exactly one key. Use the Vast.ai key
-  that INFRA.md names for the machine you are on, and do not make another.
-  Hand it over as a file, which lasts as long as the command:
-  `foundation exec --inputs '[{"name": "VAST_SSH_KEY_FILE", "source": {"id": "VARIABLE"}, "format": "file"}]' -- vast-rental rent ...`.
-  An agent from `foundation ssh-key agent` drops the key after 15 minutes. The
-  Vast.ai API key comes from `.env` beside the script, or from VAST_API_KEY.
-- `rent` writes how to reach the machine it kept as an ssh configuration and
-  prints its path as `ssh_config`: `ssh -F PATH vast-INSTANCE` (and
-  `rsync -e "ssh -F PATH"`) reach the machine with the same key, without its
-  address showing. `vast-rental ssh-config INSTANCE` writes it again.
+- `rent` and `ssh-config` need the private key file that VAST_SSH_KEY_FILE
+  names: the Vast.ai key that INFRA.md names for the machine you are on. Do
+  not make another key. Hand it over from Foundation as a file, which lasts as
+  long as the command:
+  `foundation exec --inputs '[{"name": "VAST_SSH_KEY_FILE", "source": {"id": "VARIABLE"}, "format": "file"}]' -- COMMAND`.
+  `rent` gives its public half to the machine it rents, and only to that
+  machine. The Vast.ai API key comes from `.env` beside the script, or from
+  VAST_API_KEY.
+- `rent` checks the machine over ssh with that key, the way the work will
+  reach it, then writes how to reach it as an ssh configuration and prints its
+  path as `ssh_config`. Do the work through it, with the same key:
+  `ssh -F PATH -i "$VAST_SSH_KEY_FILE" -o IdentitiesOnly=yes vast-INSTANCE`,
+  and `rsync -e` with the same ssh. Its address shows nowhere.
+  `vast-rental ssh-config INSTANCE` writes the file again.
 - Give `--hours` as the longest the work may take: a guard returns the machine
   at that deadline even if the session that rented it has ended.
   `vast-rental extend INSTANCE HOURS` moves the deadline.
