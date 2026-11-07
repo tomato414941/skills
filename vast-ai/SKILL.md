@@ -28,6 +28,8 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
   `ssh -F PATH -i "$VAST_SSH_KEY_FILE" -o IdentitiesOnly=yes vast-INSTANCE`,
   and `rsync -e` with the same ssh. Its address shows nowhere.
   `vast-rental ssh-config INSTANCE` writes the file again.
+- Send large data to the machine through R2, as the cloudflare-r2 skill
+  says, not over ssh from here.
 - Give `--hours` as the longest the work may take: a guard returns the machine
   at that deadline even if the session that rented it has ended.
   `vast-rental extend INSTANCE HOURS` moves the deadline.
