@@ -20,5 +20,5 @@ description: Rent servers, VPS and GPUs on OVHcloud, and wait for VPS stock. Rea
   `python3 scripts/vps_watch.py add NAME PLAN MAX_PRICE --places any`.
   It orders each target once, in the first allowed place with Linux stock,
   and stops a target whose price is above its cap. `list` shows the targets
-  and `check` shows where each could be ordered now. Where it is set up, a
-  user timer (`ovh-vps-watch.timer`) runs it every five minutes.
+  and `check` shows where each could be ordered now. `run` orders
+  whatever is in stock; have a timer run it every few minutes.

@@ -1,15 +1,15 @@
 ---
 name: foundation
-description: Use Foundation, which keeps this environment's credentials, connections and SSH keys. Use whenever a task needs an API key, a token, a login or an SSH key, or works with Foundation itself.
+description: Use Foundation, a store of credentials, connections and SSH keys that hands them to commands without showing them. Use whenever a task needs an API key, a token, a login or an SSH key, or works with Foundation itself.
 ---
 
 # foundation
 
 - Foundation keeps credentials as items: variables, connections (logins to
   services, with named outputs) and SSH keys. Each item belongs to a
-  principal, and this machine is one. Commands name items by ID; INFRA.md
-  lists the IDs that sessions use. IDs belong to this environment, so keep
-  them out of repositories. `foundation --help` lists every command.
+  principal, such as a machine that has signed in. Commands name items by
+  ID. IDs belong to one installation, so keep them out of repositories.
+  `foundation --help` lists every command.
 - Programs never call Foundation. A program takes its credentials as any
   program would, from environment variables, files or the SSH agent, and the
   command line that runs it is wrapped with Foundation.
@@ -24,9 +24,9 @@ description: Use Foundation, which keeps this environment's credentials, connect
 - Values that reach exec's output come out as `[redacted]`. Never print a
   value, or any part of one, and never keep one in a file that outlives the
   command that needs it, as `foundation read --output` into `~/.ssh` would.
-- SSH keys: one per machine and destination, named "MACHINE (DESTINATION)",
-  with the private key kept in Foundation. Every session on a machine shares
-  them, so use the one INFRA.md names instead of making another.
+- SSH keys: keep one per machine and destination, with the private key in
+  Foundation, and let every session on that machine share it: use the key
+  that exists instead of making another.
   `foundation ssh-key agent KEY -- COMMAND` runs COMMAND with SSH_AUTH_SOCK
   naming a temporary agent that holds the key.
 - The agent drops the key 15 minutes after COMMAND starts. Connections opened
