@@ -12,8 +12,9 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
 - `vast-rental offers GPU` shows the offers in the order that `rent` tries
   them. `vast-rental rent GPU --image IMAGE --label LABEL --hours HOURS`
   rents the cheapest suitable machine, checks it at once and sends it back if
-  it fails, until one passes or `--tries` machines have failed, and prints the
-  instance it kept as JSON.
+  it fails, until one passes, `--tries` machines have failed or the failed
+  ones have cost more than `--failure-budget` dollars, and prints the instance
+  it kept, with its deadline, as JSON.
 - `rent` and `ssh-config` need the private key file that VAST_SSH_KEY_FILE
   names: the Vast.ai key that INFRA.md names for the machine you are on. Do
   not make another key. Hand it over from Foundation as a file, which lasts as
@@ -30,13 +31,18 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
   `vast-rental ssh-config INSTANCE` writes the file again.
 - Send large data to the machine through R2, as the cloudflare-r2 skill
   says, not over ssh from here.
-- Give `--hours` as the longest the work may take: a guard returns the machine
-  at that deadline even if the session that rented it has ended.
+- Give `--hours` as the longest the work may take: the workstation's watcher
+  (`vast-rental watch`, which `install.sh` runs as a systemd user service)
+  returns the machine at that deadline whatever has become of the work, and
+  `rent` rents nothing while the watcher does not run.
   `vast-rental extend INSTANCE HOURS` moves the deadline.
 - When the work ends, record how it ran (`vast-rental note INSTANCE TEXT
-  --values JSON`), then return the machine (`vast-rental return INSTANCE`).
-  If the work ran much slower than on other machines with the same GPU, say
-  so in the note.
+  --values JSON`), then return the machine (`vast-rental return INSTANCE`, or
+  `vast-rental return --label LABEL` for every machine with the label). A
+  return that Vast.ai does not complete is the watcher's to finish.
+- If the machine failed the work, such as by becoming unreachable or running
+  much slower than other machines with the same GPU, record it with
+  `vast-rental reject INSTANCE DETAIL`, so that `rent` never rents it again.
 - `rent` keeps to machines that Vast.ai has verified; `--unverified` lets in
   unverified ones too. It sends back a machine that has not begun to load its
   image after five minutes, whose GPU holds memory or has its power capped,
