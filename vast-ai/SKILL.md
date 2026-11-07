@@ -5,6 +5,9 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
 
 # vast-ai
 
+The rules for any rented GPU are in the rented-gpu skill; this one says how
+to rent from Vast.ai.
+
 - Rent, use and return Vast.ai machines through `vast-rental`
   (github.com/tomato414941/vast-rental; its `install.sh` puts it on PATH).
   Every rental goes into its ledger, which all sessions on the workstation
@@ -29,8 +32,6 @@ description: Rent a GPU machine on Vast.ai, run work on it, and delete it. Use w
   `ssh -F PATH -i "$VAST_SSH_KEY_FILE" -o IdentitiesOnly=yes vast-INSTANCE`,
   and `rsync -e` with the same ssh. Its address shows nowhere.
   `vast-rental ssh-config INSTANCE` writes the file again.
-- Send large data to the machine through R2, as the cloudflare-r2 skill
-  says, not over ssh from here.
 - Give `--hours` as the longest the work may take: the workstation's watcher
   (`vast-rental watch`, which `install.sh` runs as a systemd user service)
   returns the machine at that deadline whatever has become of the work, and
